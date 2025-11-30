@@ -1,5 +1,7 @@
 from tkinter import *
 import pandas as pd
+import os
+
 class APP:
     def __init__(self):
 
@@ -12,7 +14,40 @@ class APP:
             text_d = f'Added {quantity} of {name}'
             self.detail_label = Label(text=text_d).grid(row = 3, column = 0)
         def add_to_csv():
-            pass
+
+            quantity = int(self.p_quantity_entry.get())
+            buy = int(self.p_buy_entry.get())
+            sell = int(self.p_sell_entry.get())
+            profit = sell - buy
+            name = self.p_name_entry.get()
+            filename = 'data.csv'
+            # Determine next serial number
+            if os.path.exists(self.filename):
+                old_df = pd.read_csv(self.filename)
+                serial_no = old_df["Serial"].max() + 1 if len(old_df) > 0 else 1
+            else:
+                serial_no = 1
+
+            # Create new row
+            new_row = {
+                "Serial": serial_no,
+                "Name": name,
+                "Buy": buy,
+                "Sell": sell,
+                "Quantity": quantity,
+                "Profit": profit
+            }
+
+            new_df = pd.DataFrame([new_row])  # <-- Correct dataframe
+
+            # Save to CSV
+            if os.path.exists(self.filename):
+                new_df.to_csv(self.filename, mode="a", index=False, header=False)
+            else:
+                new_df.to_csv(self.filename, index=False)
+
+            Label(self.root, text=f"Saved (Serial {serial_no})").grid(row=6, column=0, columnspan=2)
+
         def add_placeholder(entry, placeholder):
             entry.insert(0, placeholder) 
             entry.config(fg="grey")
