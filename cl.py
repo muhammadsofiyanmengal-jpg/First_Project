@@ -4,27 +4,40 @@ import os
 
 class APP:
     def __init__(self):
-
-        def click():
-            quantity = int(self.p_quantity_entry.get())
-            buy = int(self.p_sell_entry.get())
-            sell = int(self.p_buy_entry.get())
-            profit = buy - sell
-            name = self.p_name_entry.get()
-            text_d = f'Added {quantity} of {name}'
-            self.detail_label = Label(text=text_d).grid(row = 3, column = 0)
+        
         def add_to_csv():
-
-            quantity = int(self.p_quantity_entry.get())
-            buy = int(self.p_buy_entry.get())
-            sell = int(self.p_sell_entry.get())
-            profit = sell - buy
             name = self.p_name_entry.get()
-            filename = 'data.csv'
+            buy = self.p_buy_entry.get()
+            sell = self.p_sell_entry.get()
+            quantity = self.p_quantity_entry.get()
+
+            # Check if any field is empty or still has placeholder
+            if not name or not buy or not sell or not quantity \
+               or name == "Name" or buy == "Buy" or sell == "Sell" or quantity == "Quantity":
+                Label(self.root, text="All fields must be filled correctly!").grid(row=3, column=0)
+                return  # Stop function
+
+            # Try converting to integers safely
+            try:
+                buy_val = int(buy)
+                sell_val = int(sell)
+                quantity_val = int(quantity)
+            except ValueError:
+                Label(self.root, text="Buy, Sell, and Quantity must be numbers!").grid(row=3, column=0)
+                return
+
+            profit = (sell_val - buy_val) * quantity_val
+            filename = "data.csv"
+            text_d = f"Added {quantity_val} of {name}"
+            Label(self.root, text=text_d).grid(row=3, column=0)
+
             # Determine next serial number
-            if os.path.exists(self.filename):
-                old_df = pd.read_csv(self.filename)
-                serial_no = old_df["Serial"].max() + 1 if len(old_df) > 0 else 1
+            if os.path.exists(filename):
+                old_df = pd.read_csv(filename)
+                if "Serial" in old_df.columns and len(old_df) > 0:
+                    serial_no = old_df["Serial"].max() + 1
+                else:
+                    serial_no = 1
             else:
                 serial_no = 1
 
@@ -32,19 +45,19 @@ class APP:
             new_row = {
                 "Serial": serial_no,
                 "Name": name,
-                "Buy": buy,
-                "Sell": sell,
-                "Quantity": quantity,
+                "Buy": buy_val,
+                "Sell": sell_val,
+                "Quantity": quantity_val,
                 "Profit": profit
             }
 
-            new_df = pd.DataFrame([new_row])  # <-- Correct dataframe
+            new_df = pd.DataFrame([new_row])
 
             # Save to CSV
-            if os.path.exists(self.filename):
-                new_df.to_csv(self.filename, mode="a", index=False, header=False)
+            if os.path.exists(filename):
+                new_df.to_csv(filename, mode="a", index=False, header=False)
             else:
-                new_df.to_csv(self.filename, index=False)
+                new_df.to_csv(filename, index=False)
 
             Label(self.root, text=f"Saved (Serial {serial_no})").grid(row=6, column=0, columnspan=2)
 
@@ -84,7 +97,7 @@ class APP:
         self.p_quantity_entry.grid(row=1, column=1)
         add_placeholder(self.p_quantity_entry, "Quantity")
 
-        self.insert_button = Button(self.root, text='Insert', command=click)
+        self.insert_button = Button(self.root, text='Insert', command=add_to_csv, bg="green", fg="white")
         self.insert_button.grid(row=2, column=0, columnspan=2)
 
         
