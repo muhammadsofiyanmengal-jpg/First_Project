@@ -73,11 +73,11 @@ class APP:
         add_placeholder(self.p_name_entry, "Name")
 
         self.p_buy_entry = Entry(self.root)
-        self.p_buy_entry.grid(row=1, column=0)
+        self.p_buy_entry.grid(row=0, column=1)
         add_placeholder(self.p_buy_entry, "Buy")
 
         self.p_sell_entry = Entry(self.root)
-        self.p_sell_entry.grid(row=0, column=1)
+        self.p_sell_entry.grid(row=1, column=0)
         add_placeholder(self.p_sell_entry, "Sell")
 
         self.p_quantity_entry = Entry(self.root)
