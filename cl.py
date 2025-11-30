@@ -1,5 +1,5 @@
 from tkinter import *
-
+import pandas as pd
 class APP:
     def __init__(self):
 
@@ -7,12 +7,14 @@ class APP:
             quantity = int(self.p_quantity_entry.get())
             buy = int(self.p_sell_entry.get())
             sell = int(self.p_buy_entry.get())
-            profit = buy -
-            text_d = f'In {quantity} {self.p_name_entry.get()} has a profit of {profit}'
+            profit = buy - sell
+            name = self.p_name_entry.get()
+            text_d = f'Added {quantity} of {name}'
             self.detail_label = Label(text=text_d).grid(row = 3, column = 0)
-
+        def add_to_csv():
+            pass
         def add_placeholder(entry, placeholder):
-            entry.insert(0, placeholder)
+            entry.insert(0, placeholder) 
             entry.config(fg="grey")
 
             def on_focus_in(event):
